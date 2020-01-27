@@ -6,7 +6,8 @@ class Movies extends Component {
       movies: [],
       genres:[],
       nowplaying:false,
-      nowplayinggenreids:[]
+      nowplayinggenreids:[],
+      ratings:3
     };
   
     async componentDidMount() {
@@ -21,37 +22,74 @@ class Movies extends Component {
           await axios.get(genreurl)
           ])
           .then(axios.spread((playing, genre) => {
-
         
             this.setState({ genres: [...this.state.genres,...genre.data.genres ]});
            
             this.setState({ movies:[...this.state.movies, ...playing.data.results] });
-       
+            //getuniquegenreids
+            //console.log('results',playing.data.results);
+                
            
           }));
+//getthe unique ids
+//let genreid=[];
 
     
+   // console.log(genreid);
+   // let newgenreids = [...new Set(genreid)];
+    //this.state.nowplayinggenreids
+    //this.setState({ nowplayinggenreids:[...this.state.nowplayinggenreids, ...newgenreids] });
+  //  console.log(this.state.nowplayinggenreids);
     }
   
-    
+    //let genreid=[];
     getNameFromId=(id)=> {
-     
+     let genreid=[];
    const gen=this.state.genres.filter(e=>e.id===id);
-  
+  // console.log(gen[0].id);
+   //genreid.push(gen[0].id);
+   //console.log(genreid);
+   //let newgenreids = [ ...genreid,...gen[0].id];
+    //this.state.nowplayinggenreids
+   //this.setState({ nowplayinggenreids:[...this.state.nowplayinggenreids, ...genreid ]} );
+   // console.log(this.state.nowplayinggenreids);
+  const addarray= ()=>{
+    genreid.push(gen[0].id)
+    //this.setState({ nowplayinggenreids:[...this.state.nowplayinggenreids, ...genreid ]} );
+    console.log(genreid);
+  }
+  addarray();
       return  gen[0].name +"  ";
     }
 
+
+    handleChange =(event) =>{
+        
+        this.setState({ratings: event.target.value});
+
+        const fliteredmovies=this.state.movies.filter(e=>e.vote_average >= event.target.value);
+
+this.setState({movies:fliteredmovies});
+      }
     render() {
-        //getNameFromId=(id)=> id +","  
-      console.log(this.state.movies);
-      console.log(this.state.genres);
-
-      //getGenreFromIDofMovie=()=>{
-
-     // }
+        const renderOption = item => <option value={item}>{item}</option>
+      
       return (
           
         <div className="container">
+            <div> 
+            
+          
+          
+          <label>
+          Ratings:
+          <input type="text" value={this.state.ratings} onChange={(e)=>this.handleChange(e)} />
+        </label>
+          </div>
+<div>
+      {this.state.movies.map(movie=><span key={movie.id}>{movie.genre_ids.map(id=>this.getNameFromId(id))}</span>)}
+</div>
+
           {this.state.movies.map(movie =>
           <div key={movie.id}>
           
@@ -62,7 +100,8 @@ class Movies extends Component {
         
          
          )}
-        //</div>
+         <div> <input type="checkbox" name="vehicle1" value="Bike"/> I have a bike</div>
+        </div>
        
       );
     }
